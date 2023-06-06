@@ -29,7 +29,7 @@ typedef struct
 } UF;
 
 void DescricaoProduto(PRODUTO *produto, int i);
-int le_valida_produto(PRODUTO *produto, UF *uf, int marca_registrada);
+int le_valida_produto(PRODUTO *produto, UF *uf, int marca_registrada, int UF_escolhidas_pelo_fabricante[]);
 
 void RegistrarMarca(FABRICANTE *fabricante, int i,UF*uf);
 int le_valida_marca(FABRICANTE *fabricante, UF *uf);
@@ -37,6 +37,7 @@ int le_valida_marca(FABRICANTE *fabricante, UF *uf);
 
 void RegistrarUf(UF *uf);
 void menu_uf(UF*uf,int marca_registrada);
+void UF_disponiveis_para_produtos(UF* uf, int marca_registrada, int UF_escolhidas_pelo_fabricante[]);
 
 
 int main(){
@@ -50,19 +51,19 @@ int main(){
     
     qtd_marcas = le_valida_marca(fabricante, uf);
     int UF_escolhidas_pelo_fabricante[qtd_marcas];
-    qtd_produtos = le_valida_produto(produto, uf, qtd_marcas);
+    qtd_produtos = le_valida_produto(produto, uf, qtd_marcas,UF_escolhidas_pelo_fabricante);
 
     return 0;
 }
 // o produto tem um fabricante e o fabricante tem uma unidade federativa ... produto vem dessa unidade federativa
 void RegistrarMarca(FABRICANTE *fabricante, int i,UF*uf) // possui id_uf
 { // PRIMEIRA ALTERACAO
-    printf("\t%da MARCA\n",i+1);
+    //printf("\t%da MARCA\n",i+1);
     printf("Informe o nome da marca:\n> ");
     scanf(" %[^\n]s", (*(fabricante + i)).nome_marca);
 
     // atribuindo os id_uf para cada fabricante registrado
-    uf[i].id_uf = i;
+    uf[i].id_uf = i; // id_uf sao associados a marca
 
 }
 
@@ -83,7 +84,7 @@ void DescricaoProduto(PRODUTO *produto, int i) // possui id_produto
 }
 
 /*PRODUTO - TEM UF*/
-int le_valida_produto(PRODUTO *produto, UF *uf, int marca_registrada)
+int le_valida_produto(PRODUTO *produto, UF *uf, int marca_registrada, int UF_escolhidas_pelo_fabricante[])
 { // CHAMADA NA MAIN --> qtd_produtos = le_valida_produto(produto, uf);
     int produto_registrado = 0;
     char confirm;
@@ -92,6 +93,7 @@ int le_valida_produto(PRODUTO *produto, UF *uf, int marca_registrada)
     { // minimo de 5 produtos registrados
         printf("\t%do - PRODUTO\n",produto_registrado+1);
         DescricaoProduto(produto, produto_registrado); // possui id_produto
+        UF_disponiveis_para_produtos(uf, marca_registrada, UF_escolhidas_pelo_fabricante);
         // RegistrarUf(uf, produto_registrado); // possui id_uf // vai aparecer a tabela soh dos id_uf disponiveis e não todos
         /*
         for()
@@ -180,8 +182,10 @@ void menu_uf(UF*uf,int marca_registrada){ // possui id_uf ... não mais
             }
         printf("\n");
     }
-    scanf("%d", &UF_escolhidas_pelo_fabricante[marca_registrada]);
-    
+    scanf("%d\n", &UF_escolhidas_pelo_fabricante[marca_registrada]); // id da UF da marca
+
+    printf("%d\n",UF_escolhidas_pelo_fabricante[marca_registrada]);
+    printf("%d\n", uf[marca_registrada].id_uf);
     // atribuindo valor aos id_ufs ... ao invés de ter 27 id_ufs eu posso ter soh os id_ufs registradas por um fabricante
     /*
     for(int a=0;a<27;a++){
@@ -195,9 +199,10 @@ void menu_uf(UF*uf,int marca_registrada){ // possui id_uf ... não mais
     
 }
 
-/*
-void UF_disponiveis_para_produtos(UF* uf){
 
-    printf(""uf[op-1].id_uf);
+void UF_disponiveis_para_produtos(UF* uf, int marca_registrada, int UF_escolhidas_pelo_fabricante[]){
+
+    for(int i=0;i<marca_registrada;i++){
+        printf(" %s", uf[uf[UF_escolhidas_pelo_fabricante[marca_registrada]-1].id_uf].nome);
+    }
 }
-*/
